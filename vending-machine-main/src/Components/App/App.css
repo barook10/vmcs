@@ -1,0 +1,21 @@
+/* App.css */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Your Preferred Font', sans-serif; /* Add your preferred font */
+  background-color: #fff; /* Set a background color if needed */
+}
+
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0; /* Set a background color if needed */
+}

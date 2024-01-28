@@ -1,0 +1,25 @@
+.coin-storage-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+  }
+  
+  .coin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .coin-table th,
+  .coin-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .coin-table th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Add more styles as needed */
+  
