@@ -26,7 +26,7 @@ const CoinStorage = ({ vendingMachineContext }) => {
       <table className={styles['coin-table']}>
         <thead>
           <tr>
-            <th>Coin Value</th>
+            <th>Denomination</th>
             <th>Coin Count</th>
           </tr>
         </thead>

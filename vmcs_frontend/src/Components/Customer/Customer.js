@@ -46,7 +46,6 @@ class Customer extends Component {
           console.log("Change:", changeInCents / 100);
   
           try {
-            // Construct the coin storage data to match CoinStorage.js
             const coinStorageData = {
               coins: Object.entries(state.coinStorage.coins).map(([coinValue, coinCount]) => ({
                 coin_value: coinValue,
