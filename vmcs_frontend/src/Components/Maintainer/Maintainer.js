@@ -1,20 +1,19 @@
 // Maintainer.js
 
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './Maintainer.module.css';
-import CoinStorage from '../CoinStorage/CoinStorage';
-import withVendingMachine from '../Context/VendingMachineWrapper';
-import DrinkStorage from '../DrinkStorage/DrinkStorage';
-import api from '../../utils/api';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import styles from "./Maintainer.module.css";
+import CoinStorage from "../CoinStorage/CoinStorage";
+import withVendingMachine from "../Context/VendingMachineWrapper";
+import DrinkStorage from "../DrinkStorage/DrinkStorage";
+import api from "../../utils/api";
 
 class Maintainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: '',
+      password: "",
       isPasswordCorrect: false,
-
     };
   }
 
@@ -25,16 +24,22 @@ class Maintainer extends Component {
     if (isPasswordCorrect) {
       try {
         // Fetch sales data from the API
-        const response = await api.get('/sales');
+        const response = await api.get("/sales");
+        console.log("API Response:", response); // Log the entire response
+
         const salesData = response.data;
 
-        // Update the state with sales data
-        this.setState({ salesData });
 
         // Update the context with sales data
-        dispatch({ type: 'UPDATE_SALES_INFO', payload: { sales: salesData.sales, totalDrinksSold: salesData.totalDrinksSold } });
+        dispatch({
+          type: "UPDATE_SALES_INFO",
+          payload: {
+            sales: salesData.sales,
+            totalDrinksSold: salesData.totalDrinksSold,
+          },
+        });
       } catch (error) {
-        console.error('Error fetching sales data:', error.message);
+        console.error("Error fetching sales data:", error.message);
       }
     }
   }
@@ -44,23 +49,26 @@ class Maintainer extends Component {
     const { dispatch } = this.props.vendingMachineContext;
 
     if (isPasswordCorrect) {
-      dispatch({ type: 'RESET_SALES' });
+      dispatch({ type: "RESET_SALES" });
     }
   };
 
   getDenomination = () => {
-    const { state } = this.props.vendingMachineContext;
-    const totalSales = state.drinks.reduce((total, drink) => total + parseFloat(drink.sales || 0), 0);
+    const { state, fetchedData } = this.props.vendingMachineContext;
+    const totalSales = state.drinks.reduce(
+      (total, drink) => total + parseFloat(drink.sales || 0),
+      0
+    );
     return isNaN(totalSales) ? 0 : totalSales.toFixed(2);
   };
 
   render() {
-    const { password, isPasswordCorrect, salesData } = this.state;
+    const { password, isPasswordCorrect } = this.state;
 
     return (
-      <div className={styles['sales-container']}>
+      <div className={styles["sales-container"]}>
         {!isPasswordCorrect ? (
-          <div className={styles['input-container']}>
+          <div className={styles["input-container"]}>
             <p>Enter password to access the Sales panel:</p>
             <input
               type="password"
@@ -69,7 +77,7 @@ class Maintainer extends Component {
             />
             <button
               onClick={() => {
-                if (password === 'admin') {
+                if (password === "admin") {
                   this.setState({ isPasswordCorrect: true });
                 }
               }}
@@ -79,12 +87,14 @@ class Maintainer extends Component {
           </div>
         ) : (
           <div>
-            <Link to='/'>
-              <button className={styles['collect-cash-button']}>End Simulation</button>
+            <Link to="/">
+              <button className={styles["collect-cash-button"]}>
+                End Simulation
+              </button>
             </Link>
 
             {/* Display sales stats for each drink */}
-            <table className={styles['sales-table']}>
+            <table className={styles["sales-table"]}>
               <thead>
                 <tr>
                   <th>Drink Name</th>
@@ -95,9 +105,13 @@ class Maintainer extends Component {
               </thead>
               <tbody>
                 {this.props.vendingMachineContext.state.drinks.map((drink) => (
-                  <tr key={drink.name} className={styles['drink-stats']}>
+                  <tr key={drink.name} className={styles["drink-stats"]}>
                     <td>
-                      <DrinkStorage drink={drink} image={drink.image} isSalesView={true} />
+                      <DrinkStorage
+                        drink={drink}
+                        image={drink.image}
+                        isSalesView={true}
+                      />
                     </td>
                     {/* Additional sales information for each drink */}
                     <td>
@@ -123,12 +137,13 @@ class Maintainer extends Component {
             <CoinStorage />
 
             {/* Button to Collect all cash */}
-            <button className={styles['collect-cash-button']} onClick={this.dispenseCash}>
+            <button
+              className={styles["collect-cash-button"]}
+              onClick={this.dispenseCash}
+            >
               Collect all cash
             </button>
             <p>Total Sales: RM {this.getDenomination()}</p>
-
-            
           </div>
         )}
       </div>

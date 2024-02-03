@@ -10,12 +10,13 @@ const initialState = {
   remainingStock: 0,
   coinStorage: {
     coins: {
-      100: 10,
-      50: 20,
-      20: 10,
-      10: 10,
+      100: 5,
+      50: 5,
+      20: 5,
+      10: 5,
     },
   },
+  noChangeAvailable: false, 
 };
 
 const reducer = (state, action) => {
@@ -49,7 +50,7 @@ const reducer = (state, action) => {
             ? {
                 ...drink,
                 quantity: drink.quantity - 1,
-                sales: drink.sales + drink.price,
+                sales: parseFloat(drink.sales) + parseFloat(drink.price),
                 totalSold: drink.totalSold + 1,
               }
             : drink
@@ -113,37 +114,44 @@ const reducer = (state, action) => {
     // Inside the "UPDATE_COIN_STORAGE" case in the reducer
     case "UPDATE_COIN_STORAGE":
       const { change } = action.payload;
-      console.log("Updating coinStorage with coins:", change);
-
+    
       // Deduct change from coin denominations
       let remainingChange = change;
       const updatedCoins = { ...state.coinStorage.coins };
-
+    
       const availableDenominations = Object.keys(updatedCoins)
         .sort((a, b) => b - a)
         .map(Number);
-
+    
       availableDenominations.forEach((denomination) => {
         const numberOfCoins = Math.floor(remainingChange / denomination);
-
+    
         if (numberOfCoins > 0 && updatedCoins[denomination] >= numberOfCoins) {
           updatedCoins[denomination] -= numberOfCoins;
           remainingChange -= numberOfCoins * denomination;
         }
       });
-
-      if (remainingChange === 0) {
+    
+      const noChangeAvailable = remainingChange > 0 && remainingChange !== state.drinks.find(d => d.price === remainingChange)?.price;
+    
+      if (noChangeAvailable) {
+        console.log("No change available!");
         return {
           ...state,
+          noChangeAvailable,
+        };
+      } else {
+        return {
+          ...state,
+          noChangeAvailable,
           coinStorage: {
             ...state.coinStorage,
             coins: updatedCoins,
           },
         };
-      } else {
-        // Handle insufficient change scenario or other logic as needed
-        return state; // Return the unchanged state or handle the error as needed
       }
+    
+    
 
     case "UPDATE_LOCAL_STORAGE":
       localStorage.setItem("drinks", JSON.stringify(state.drinks));
@@ -166,6 +174,27 @@ const VendingMachineProvider = ({ children }) => {
       payload: { sales, totalDrinksSold },
     });
   };
+
+  // const updateCoinStorage = async (coinValue, coinCount) => {
+  //   try {
+  //     // Update the coin storage on the server
+  //     const response = await api.post("/coin-storage", {
+  //       coin_value: coinValue,
+  //       coin_count: coinCount,
+  //     });
+
+  //     // Dispatch an action to update the coin storage in the context
+  //     dispatch({
+  //       type: "UPDATE_COIN_STORAGE",
+  //       payload: { change: response.data.updatedCoins },
+  //     });
+
+  //     // Handle success or update the state as needed
+  //   } catch (error) {
+  //     // Handle error
+  //     console.error("Error updating coin storage:", error);
+  //   }
+  // };
 
   useEffect(() => {
     // Load coinStorage from local storage and update the initial state

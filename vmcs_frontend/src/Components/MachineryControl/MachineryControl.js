@@ -199,7 +199,7 @@ class MachineryControl extends Component {
                 onChange={(e) => this.setState({ newDrinkQuantity: e.target.value })}
               />
               <input
-                type="text"
+                type="url"
                 placeholder="Image URL"
                 value={newDrinkImage}
                 onChange={(e) => this.setState({ newDrinkImage: e.target.value })}
