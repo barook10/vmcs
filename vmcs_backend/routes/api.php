@@ -40,5 +40,5 @@ Route::get('/sales', [SalesController::class, 'getSalesData']);
 
 Route::post('/coin-storage', [CoinStorageController::class, 'updateCoinStorage']);
 
-Route::get('/coin-storage', [CoinStorageController::class, 'getCoinStorage']);
+Route::get('/get-coin-storage', [CoinStorageController::class, 'getCoinStorage']);
 

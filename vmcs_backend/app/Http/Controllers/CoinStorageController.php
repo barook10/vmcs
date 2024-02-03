@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\CoinStorage;
 use Illuminate\Http\Request;
 
@@ -11,25 +10,29 @@ class CoinStorageController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'coin_value' => 'required|integer|min:0',
-                'coin_count' => 'required|integer|min:0',
+                'coins' => 'required|array',
+                'coins.*.coin_value' => 'required|integer|min:0',
+                'coins.*.coin_count' => 'required|integer|min:0',
             ]);
 
-            $coinValue = $validatedData['coin_value'];
-            $coinCount = $validatedData['coin_count'];
+            // Loop through each coin in the 'coins' array
+            foreach ($validatedData['coins'] as $coin) {
+                $coinValue = $coin['coin_value'];
+                $coinCount = $coin['coin_count'];
 
-            // Find or create a record in the coin storage table
-            $coinStorage = CoinStorage::updateOrCreate(
-                ['coin_value' => $coinValue],
-                ['coin_count' => $coinCount]
-            );
+                // Find or create a record in the coin storage table
+                $coinStorage = CoinStorage::updateOrCreate(
+                    ['coin_value' => $coinValue],
+                    ['coin_count' => $coinCount]
+                );
 
-            // If the coin storage record is updated or created, return the updated data
-            if ($coinStorage) {
-                return response()->json(['coins' => $coinStorage]);
+                // If the coin storage record is updated or created, return the updated data
+                if (!$coinStorage) {
+                    return response()->json(['error' => 'Unable to update coin storage'], 500);
+                }
             }
 
-            return response()->json(['error' => 'Unable to update coin storage'], 500);
+            return response()->json(['coins' => $validatedData['coins']]);
         } catch (\Exception $e) {
             // Log the exception
             \Log::error('Error updating coin storage: ' . $e->getMessage());
@@ -42,11 +45,10 @@ class CoinStorageController extends Controller
     {
         // Retrieve all records from the coin storage table
         $coinStorage = CoinStorage::all();
-    
+
         // Format the data as an associative array
         $formattedCoinStorage = $coinStorage->pluck('coin_count', 'coin_value')->toArray();
-    
+
         return response()->json(['coins' => $formattedCoinStorage]);
     }
-    
 }
