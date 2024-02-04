@@ -18,6 +18,7 @@ class Customer extends Component {
     const { selectedDrinks, currentBalance } = this.state;
     const { state, dispatch, updateSalesInformation } = this.props.vendingMachineContext;
   
+    // Display "No change available" message if state.noChangeAvailable is true
     if (state.noChangeAvailable) {
       const noChangeMessage = "No change available!";
       const newDrinkMessages = {};
@@ -30,6 +31,7 @@ class Customer extends Component {
       return;
     }
   
+    // Proceed with the purchase only if the balance is sufficient
     for (const selectedDrink of selectedDrinks) {
       const newDrinkMessages = { [selectedDrink.name]: "" };
       this.setState({ drinkMessages: newDrinkMessages });
@@ -90,6 +92,7 @@ class Customer extends Component {
     // Reset selected drinks
     this.setState({ selectedDrinks: [] });
   };
+  
   
 
   addDenomination = (amount) => {

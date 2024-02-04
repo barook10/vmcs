@@ -44,10 +44,21 @@ class Maintainer extends Component {
 
   dispenseCash = () => {
     const { isPasswordCorrect } = this.state;
-    const { dispatch } = this.props.vendingMachineContext;
-
+    const { dispatch, state } = this.props.vendingMachineContext;
+  
     if (isPasswordCorrect) {
-      dispatch({ type: "RESET_SALES" });
+      // Check if there are any sales
+      const totalSales = state.drinks.reduce(
+        (total, drink) => total + parseFloat(drink.sales || 0),
+        0
+      );
+  
+      if (totalSales > 0) {
+        dispatch({ type: "RESET_SALES" });
+        alert(`Cash Collected! Total Sales: RM ${this.getDenomination()}`)
+      } else {
+        alert("No sales to collect.");
+      }
     }
   };
 

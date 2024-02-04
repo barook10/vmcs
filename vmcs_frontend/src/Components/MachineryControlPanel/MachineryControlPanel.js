@@ -30,11 +30,15 @@ class MachineryControl extends Component {
     }
   }
 
-  addDrink = async () => {
-    const { isPasswordCorrect, newDrinkName, newDrinkPrice, newDrinkQuantity, newDrinkImage } = this.state;
-    const { dispatch } = this.props.vendingMachineContext;
+  
+addDrink = async () => {
+  const { isPasswordCorrect, newDrinkName, newDrinkPrice, newDrinkQuantity, newDrinkImage } = this.state;
+  const { dispatch } = this.props.vendingMachineContext;
+  const { drinks } = this.props.vendingMachineContext.state;
 
-    if (isPasswordCorrect) {
+  if (isPasswordCorrect) {
+    // Check if the total number of drinks is less than 20
+    if (drinks.length < 6) {
       const newDrink = {
         name: newDrinkName,
         price: parseFloat(newDrinkPrice),
@@ -42,27 +46,36 @@ class MachineryControl extends Component {
         image: newDrinkImage,
       };
 
-      try {
-        // Add the new drink to the API
-        const response = await api.post('/drinks', newDrink);
-        const createdDrink = response.data;
+      // Check if the quantity per drink is less than or equal to 5
+      if (newDrink.quantity <= 5) {
+        try {
+          // Add the new drink to the API
+          const response = await api.post('/drinks', newDrink);
+          const createdDrink = response.data;
 
-        // Update the state with the created drink
-        dispatch({ type: 'ADD_DRINK', payload: createdDrink });
-      } catch (error) {
-        console.error('Error adding drink:', error.message);
-        console.error('Error response:', error.response.data);
+          // Update the state with the created drink
+          dispatch({ type: 'ADD_DRINK', payload: createdDrink });
+        } catch (error) {
+          console.error('Error adding drink:', error.message);
+          console.error('Error response:', error.response.data);
+        }
+
+        // Reset the input fields
+        this.setState({
+          newDrinkName: '',
+          newDrinkPrice: '',
+          newDrinkQuantity: '',
+          newDrinkImage: '',
+        });
+      } else {
+        alert('Quantity per drink cannot exceed 5.');
       }
-
-      // Reset the input fields
-      this.setState({
-        newDrinkName: '',
-        newDrinkPrice: '',
-        newDrinkQuantity: '',
-        newDrinkImage: '',
-      });
+    } else {
+      alert('Total number of drinks cannot exceed 20.');
     }
-  };
+  }
+};
+
 
   deleteDrink = async (drink) => {
     const { isPasswordCorrect } = this.state;
@@ -87,6 +100,7 @@ class MachineryControl extends Component {
     const { dispatch } = this.props.vendingMachineContext;
 
     if (isPasswordCorrect) {
+      if (drink.quantity + 1 <= 5) {
       try {
         // Increase the quantity of the drink in the API
         await api.post(`/drinks/${drink.id}/add-quantity`);
@@ -96,6 +110,9 @@ class MachineryControl extends Component {
       } catch (error) {
         console.error('Error adding quantity:', error.message);
       }
+    }else {
+      alert('Quantity per drink cannot exceed 5.');
+    }
     }
   };
 
