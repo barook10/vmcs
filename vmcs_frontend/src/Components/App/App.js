@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Customer from '../Customer/Customer';
-import MachineryControl from '../MachineryControl/MachineryControl';
-import Maintainer from '../Maintainer/Maintainer';
+import CustomerPanel from '../CustomerPanel/CustomerPanel';
+import MachineryControlPanel from '../MachineryControlPanel/MachineryControlPanel';
+import MaintainerPanel from '../MaintainerPanel/MaintainerPanel';
 import SimulatorControlPanel from '../SimulatorControlPanel/SimulatorControlPanel';
 import { VendingMachineProvider } from '../Context/VendingMachineContext';
 
@@ -15,9 +15,9 @@ const App = () => {
         <Router>
           <Routes>
             <Route path='/' element={<SimulatorControlPanel />} />
-            <Route path="/customer" element={<Customer />} />
-            <Route path="/MachineryControl" element={<MachineryControl />} />
-            <Route path="/Maintainer" element={<Maintainer />} />
+            <Route path="/customer" element={<CustomerPanel />} />
+            <Route path="/MachineryControl" element={<MachineryControlPanel />} />
+            <Route path="/Maintainer" element={<MaintainerPanel />} />
             
           </Routes>
         </Router>
